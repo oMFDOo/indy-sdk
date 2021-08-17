@@ -28,6 +28,8 @@ pub mod logger;
 pub mod cache;
 pub mod metrics;
 
+/* test.rs */
+// 테스트를 위한 각종 초기화(파일, 지갑, 풀 등)
 #[macro_use]
 #[allow(unused_macros)]
 #[path = "../../indy-utils/src/test.rs"]
@@ -35,26 +37,42 @@ pub mod test;
 
 pub mod timeout;
 
+// lazy_static으로 처리할 데이터 선언
+// lazy_staic : 만드는 데 비용이 많이 드는 개체가 있고 다른 비용이 많이 드는 작업이 완료될 때까지 생성을 지연
+// PC(Program Counter)역할을 수행
 #[path = "../../indy-utils/src/sequence.rs"]
 pub mod sequence;
 
+/* ctypes.rs */
+// 각 json파일에 대한 유효성(type, null, format) 검증
 #[macro_use]
 #[allow(unused_macros)]
 #[path = "../../indy-utils/src/ctypes.rs"]
 pub mod ctypes;
 
+/* qualifier.rs */
+// 권한 부여/해제/생성
 #[macro_use]
 #[path = "../../src/utils/qualifier.rs"]
 pub mod qualifier;
 
 pub(crate) use indy::ErrorCode;
 
+/* inmem_wallet.rs */
+// 지갑(생성, 오픈), 레코드(id빌드, id/type/value/tag 습득 및 업데이트, 할당해제, 탐색)
 #[path = "../../indy-utils/src/inmem_wallet.rs"]
 pub mod inmem_wallet;
 
+/* wql.rs */
+// WMI에 대 한 SQL로 WQL의 키워드를 정의하고 그를 이용해 세부 구현하였다.
+// WMI이란? : https://docs.microsoft.com/ko-kr/windows/win32/wmisdk/wql-sql-for-wmi
+// 쿼리 : data->json, json-> 정의된 쿼리 열거형
+// test를 위한 random 문자열/쿼리/json 파일을 생성한다.
 #[path = "../../indy-utils/src/wql.rs"]
 pub mod wql;
 
+/* mod.rs */
+// 도메인 관련 선언(crypto, ledger, pairwise, pool...)
 #[path = "../../src/domain/mod.rs"]
 pub mod domain;
 
@@ -114,6 +132,7 @@ pub struct Setup {
     pub verkey: String
 }
 
+// 기본생성자들 정의
 impl Setup {
     pub fn empty() -> Setup {
         let name = setup();
