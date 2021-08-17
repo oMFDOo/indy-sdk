@@ -76,6 +76,7 @@ pub mod wql;
 #[path = "../../src/domain/mod.rs"]
 pub mod domain;
 
+// 매크로 작동 규칙 선언
 macro_rules! inject_indy_dependencies {
     () => {
         extern crate serde;
@@ -112,17 +113,21 @@ macro_rules! inject_indy_dependencies {
     }
 }
 
+
 fn setup() -> String {
     let name = crate::utils::rand_utils::get_rand_string(10);
-    test::cleanup_storage(&name);
-    logger::set_default_logger();
+    test::cleanup_storage(&name); // 랜덤 string 초기화
+    logger::set_default_logger(); // 로그파일 설정
     name
 }
 
+// 이름 값을 이용하여 분해/초기화
 fn tear_down(name: &str) {
     test::cleanup_storage(name);
 }
 
+
+// 설정 요소
 pub struct Setup {
     pub name: String,
     pub wallet_config: String,
@@ -133,30 +138,36 @@ pub struct Setup {
 }
 
 // 기본생성자들 정의
+// impl : Setup요소에 대한 구현
 impl Setup {
+    // 비어있는 값 반환
     pub fn empty() -> Setup {
         let name = setup();
         Setup { name, wallet_config: String::new(), wallet_handle: INVALID_WALLET_HANDLE, pool_handle: INVALID_POOL_HANDLE, did: String::new(), verkey: String::new() }
     }
 
+    // 지갑 생성 후 열린 지갑을 가진 설정 반환 
     pub fn wallet() -> Setup {
         let name = setup();
         let (wallet_handle, wallet_config) = wallet::create_and_open_default_wallet(&name).unwrap();
         Setup { name, wallet_config, wallet_handle, pool_handle: INVALID_POOL_HANDLE, did: String::new(), verkey: String::new() }
     }
 
+    // 
     pub fn plugged_wallet() -> Setup {
         let name = setup();
         let (wallet_handle, wallet_config) = wallet::create_and_open_plugged_wallet().unwrap();
         Setup { name, wallet_config, wallet_handle, pool_handle: INVALID_POOL_HANDLE, did: String::new(), verkey: String::new() }
     }
 
+    // 랜덤이름으로 풀이 지정된 설정 반환 
     pub fn pool() -> Setup {
         let name = setup();
         let pool_handle = pool::create_and_open_pool_ledger(&name).unwrap();
         Setup { name, wallet_config: String::new(), wallet_handle: INVALID_WALLET_HANDLE, pool_handle, did: String::new(), verkey: String::new() }
     }
 
+    // 풀과 지갑이 동일한 이름으로 지정된 후 기본 설정으로 열린 지갑의 설정 반환
     pub fn wallet_and_pool() -> Setup {
         let name = setup();
         let (wallet_handle, wallet_config) = wallet::create_and_open_default_wallet(&name).unwrap();
@@ -164,6 +175,7 @@ impl Setup {
         Setup { name, wallet_config, wallet_handle, pool_handle, did: String::new(), verkey: String::new() }
     }
 
+    // 풀/지갑 생성, DID와 공개키 생성 후 설정 (역할군 지정 : TRUSTEE)
     pub fn trustee() -> Setup {
         let mut setup = Setup::wallet_and_pool();
         let (did, verkey) = did::create_and_store_my_did(setup.wallet_handle, Some(constants::TRUSTEE_SEED)).unwrap();
@@ -172,6 +184,7 @@ impl Setup {
         setup
     }
 
+    // 풀/지갑 생성, DID와 공개키 생성 후 설정(+ DID method 설정) (역할군 지정 : TRUSTEE)
     pub fn trustee_fully_qualified() -> Setup {
         let mut setup = Setup::wallet_and_pool();
         let (did, verkey) = did::create_and_store_my_did_v1(setup.wallet_handle, Some(constants::TRUSTEE_SEED)).unwrap();
@@ -180,6 +193,7 @@ impl Setup {
         setup
     }
 
+    // 풀/지갑 생성, DID와 공개키 생성 후 설정. (역할군 지정 : STEWARD)
     pub fn steward() -> Setup {
         let mut setup = Setup::wallet_and_pool();
         let (did, verkey) = did::create_and_store_my_did(setup.wallet_handle, Some(constants::STEWARD_SEED)).unwrap();
@@ -188,6 +202,7 @@ impl Setup {
         setup
     }
 
+    // 풀/지갑 생성 후 설정
     pub fn endorser() -> Setup {
         let mut setup = Setup::wallet_and_pool();
         let (did, verkey) = did::create_store_and_publish_did(setup.wallet_handle, setup.pool_handle, "ENDORSER", None).unwrap();
@@ -196,6 +211,7 @@ impl Setup {
         setup
     }
 
+    // 공개 did 생성 후 설정 did.rs 참조 (NYM 트랜젝션 발생)
     pub fn new_identity() -> Setup {
         let mut setup = Setup::wallet_and_pool();
         let (did, verkey) = did::create_store_and_publish_did(setup.wallet_handle, setup.pool_handle, "TRUSTEE", None).unwrap();
@@ -204,6 +220,7 @@ impl Setup {
         setup
     }
 
+    // 지갑 생성/오픈,  
     pub fn did() -> Setup {
         let name = setup();
         let (wallet_handle, wallet_config) = wallet::create_and_open_default_wallet(&name).unwrap();

@@ -32,11 +32,13 @@ pub fn create_store_and_publish_my_did_from_steward(wallet_handle: WalletHandle,
     create_store_and_publish_did(wallet_handle, pool_handle, "STEWARD", None)
 }
 
+// seed값만을 이용한 did json파일 생성
 pub fn create_and_store_my_did(wallet_handle: WalletHandle, seed: Option<&str>) -> Result<(String, String), IndyError> {
     let my_did_json = json!({"seed": seed}).to_string();
     did::create_and_store_my_did(wallet_handle, &my_did_json).wait()
 }
 
+// did의 함수 설정을 포함한 did json파일 생성
 pub fn create_and_store_my_did_v1(wallet_handle: WalletHandle, seed: Option<&str>) -> Result<(String, String), IndyError> {
     let my_did_json = json!({"seed": seed, "method_name": DEFAULT_METHOD_NAME}).to_string();
     did::create_and_store_my_did(wallet_handle, &my_did_json).wait()
