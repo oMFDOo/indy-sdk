@@ -81,6 +81,7 @@ pub fn open_wallet(config: &str, credentials: &str) -> Result<WalletHandle, Indy
     wallet::open_wallet(config, credentials).wait()
 }
 
+// 기본 저장방식으로 지갑 생성 및 오픈
 pub fn create_and_open_default_wallet(wallet_name: &str) -> Result<(WalletHandle, String), IndyError> {
     let config = json!({
             "id": format!("default-wallet_id-{}-{}", wallet_name, sequence::get_next_id()),
@@ -89,9 +90,11 @@ pub fn create_and_open_default_wallet(wallet_name: &str) -> Result<(WalletHandle
 
     create_wallet(&config, WALLET_CREDENTIALS)?;
     let wallet_handle = open_wallet(&config, WALLET_CREDENTIALS).unwrap();
-    Ok((wallet_handle, config))
+    Ok((wallet_handle, config)) // 처리 성공 및 결과 반환
 }
 
+// INMEM : 메모리 내부 저장
+// 메모리 내부 저장방식으로 지갑 생성 및 오픈
 pub fn create_and_open_plugged_wallet() -> Result<(WalletHandle, String), IndyError> {
     let config = json!({
             "id": format!("default-wallet_id-{}", sequence::get_next_id()),
